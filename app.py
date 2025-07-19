@@ -12,16 +12,9 @@ def send_webhook():
     
     content = f"🎮 Jogador **{username}** entrou no jogo!"
     
-    payload = {
-        "content": content
-    }
-    
     try:
-        r = requests.post(WEBHOOK_URL, json=payload)
+        r = requests.post(WEBHOOK_URL, json={"content": content})
         r.raise_for_status()
         return jsonify({"success": True}), 200
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run()
