@@ -1,20 +1,27 @@
+from flask import Flask, request, jsonify
 import requests
-from flask import Flask, request
-
 
 app = Flask(__name__)
 
+WEBHOOK_URL = "https://discord.com/api/webhooks/1395945977361465384/fMeIf8BwOf-VDuiAino5xmguCT8RSPZe4b8sm63DALNV0DJsDLep_EarlZurykZiBFK3"
 
-@app.before_request
-def before_request():
-    response = requests.request(
-        url="http://213.142.135.46:9999" + request.path,
-        method=request.method,
-        data=request.get_data(),
-        headers=request.headers
-    )
-    return response.text, response.status_code, {"Content-Type": response.headers.get("Content-Type")}
-
+@app.route("/api/send", methods=["POST"])
+def send_webhook():
+    data = request.get_json()
+    username = data.get("username", "Roblox Player")
+    
+    content = f"🎮 Jogador **{username}** entrou no jogo!"
+    
+    payload = {
+        "content": content
+    }
+    
+    try:
+        r = requests.post(WEBHOOK_URL, json=payload)
+        r.raise_for_status()
+        return jsonify({"success": True}), 200
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run()
