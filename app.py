@@ -8,13 +8,25 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1395945977361465384/fMeIf8BwOf-V
 @app.route("/api/send", methods=["POST"])
 def send_webhook():
     data = request.get_json()
-    username = data.get("username", "Roblox Player")
 
-    content = f"🎮 Jogador **{username}** entrou no jogo!"
+    username = data.get("username", "Roblox Player")
+    content = data.get("content", "")
+    embeds = data.get("embeds", None)
+
+    payload = {
+        "username": username,
+        "content": content,
+    }
+
+    if embeds:
+        payload["embeds"] = embeds
 
     try:
-        r = requests.post(WEBHOOK_URL, json={"content": content})
+        r = requests.post(WEBHOOK_URL, json=payload)
         r.raise_for_status()
         return jsonify({"success": True}), 200
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True)
