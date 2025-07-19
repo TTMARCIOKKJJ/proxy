@@ -9,9 +9,9 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1395945977361465384/fMeIf8BwOf-V
 def send_webhook():
     data = request.get_json()
     username = data.get("username", "Roblox Player")
-    
+
     content = f"🎮 Jogador **{username}** entrou no jogo!"
-    
+
     try:
         r = requests.post(WEBHOOK_URL, json={"content": content})
         r.raise_for_status()
